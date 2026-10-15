@@ -1,0 +1,84 @@
+<?php
+
+declare(strict_types=1);
+
+namespace RunApi\Qwen21\Resources;
+
+use RunApi\Core\Http\HttpClient;
+use RunApi\Core\Models\TaskCreateResponse;
+use RunApi\Core\RequestOptions;
+use RunApi\Core\Resources\TypedConfiguredResource;
+use RunApi\Qwen21\Models\CompletedImageTaskResponse;
+use RunApi\Qwen21\Models\ImageTaskResponse;
+
+/** Text to image operations for Qwen 2.1. */
+readonly class TextToImage extends TypedConfiguredResource
+{
+    /**
+     * Create a text to image task and return immediately with a task id.
+     *
+     * @param array{
+     *   model: string,
+     *   prompt: string,
+     *   aspect_ratio?: string,
+     *   background?: string,
+     *   callback_url?: string,
+     *   enable_prompt_expansion?: bool,
+     *   enable_safety_checker?: bool,
+     *   output_format?: string,
+     *   output_resolution?: string,
+     *   seed?: int
+     * } $params
+     */
+    public function create(array $params, ?RequestOptions $options = null): TaskCreateResponse
+    {
+        return parent::create($params, $options);
+    }
+
+    /** Fetch the current status of a text to image task. */
+    public function get(string $id, ?RequestOptions $options = null): ImageTaskResponse
+    {
+        $response = parent::get($id, $options);
+
+        /** @var ImageTaskResponse $response */
+        return $response;
+    }
+
+    /**
+     * Create a text to image task and poll until it completes.
+     *
+     * @param array{
+     *   model: string,
+     *   prompt: string,
+     *   aspect_ratio?: string,
+     *   background?: string,
+     *   callback_url?: string,
+     *   enable_prompt_expansion?: bool,
+     *   enable_safety_checker?: bool,
+     *   output_format?: string,
+     *   output_resolution?: string,
+     *   seed?: int
+     * } $params
+     */
+    public function run(array $params, ?RequestOptions $options = null): CompletedImageTaskResponse
+    {
+        $response = parent::run($params, $options);
+
+        /** @var CompletedImageTaskResponse $response */
+        return $response;
+    }
+
+    /** Create the resource using the shared RunAPI HTTP transport. */
+    public static function fromHttp(HttpClient $http): self
+    {
+        return new self(
+            $http,
+            '/api/v1/qwen_2_1/text_to_image',
+            ImageTaskResponse::class,
+            CompletedImageTaskResponse::class,
+            'text-to-image',
+            ImageTaskResponse::class,
+            CompletedImageTaskResponse::class,
+        );
+    }
+}
